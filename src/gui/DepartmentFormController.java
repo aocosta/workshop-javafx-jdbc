@@ -3,7 +3,9 @@ package gui;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import db.DbException;
 import gui.listeners.DataChangeListener;
@@ -18,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Department;
+import model.exceptions.ValidationException;
 import model.services.DepartmentService;
 
 public class DepartmentFormController implements Initializable {
@@ -79,6 +82,12 @@ public class DepartmentFormController implements Initializable {
 			// Fecha a janela
 			Utils.currentStage(event).close();
 		}
+		// Exceção lançada pelo método getFormData
+		// Exceção para validar os campos do formulário de departamento
+		catch (ValidationException e) {
+			// Apresenta as mensagens de erro
+			setErrorMessages(e.getErrors());
+		}
 		catch (DbException e) {
 			Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
 		}
@@ -94,8 +103,21 @@ public class DepartmentFormController implements Initializable {
 	private Department getFormData() {
 		Department obj = new Department();
 		
+		ValidationException exception = new ValidationException("Validation Error");
+		
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
+		
+		// Valida campo do formulário nome do departamento
+		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
+			// Adiciona mensagem de error na exceção
+			exception.addError("name", "Field can't be empty");
+		}
 		obj.setName(txtName.getText());
+		
+		// Se existe erro de validação, retorna exceção
+		if (exception.getErrors().size() > 0) {
+			throw exception;
+		}
 		
 		return obj;
 	}
@@ -122,6 +144,14 @@ public class DepartmentFormController implements Initializable {
 		}
 		txtId.setText(String.valueOf(entity.getId()));
 		txtName.setText(entity.getName());
+	}
+	
+	private void setErrorMessages(Map<String, String> errors) {
+		Set<String> fields = errors.keySet();
+		
+		if (fields.contains("name")) {
+			labelErrorName.setText(errors.get("name"));
+		}
 	}
 
 }
