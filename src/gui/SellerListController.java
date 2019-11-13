@@ -2,7 +2,7 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -105,9 +105,9 @@ public class SellerListController implements Initializable, DataChangeListener {
 		obsList = FXCollections.observableArrayList(list);
 		tableViewSeller.setItems(obsList);
 		
-		// Cria botão para editar um separtamento
+		// Cria botão para editar um vendedor
 		initEditButtons();
-		// Cria botão para remover um departamento
+		// Cria botão para remover um vendedor
 		initRemoveButtons();
 	}
 
@@ -144,11 +144,11 @@ public class SellerListController implements Initializable, DataChangeListener {
 	// classe também sofra atualização
 	@Override
 	public void onDataChanged() {
-		// Atualiza a Table View de departamentos
+		// Atualiza a Table View do vendedor
 		updateTableView();
 	}
 
-	// Cria botão para editar um departamento
+	// Cria botão para editar um vendedor
 	private void initEditButtons() {
 		tableColumnEDIT.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
 		tableColumnEDIT.setCellFactory(param -> new TableCell<Seller, Seller>() {
