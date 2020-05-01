@@ -69,13 +69,13 @@ public class DepartmentFormController implements Initializable {
 			throw new IllegalStateException("Service was null");
 		}
 		try {
-			// pega os dados do formulário
+			// Popula a entidade com os dados do formulário
 			entity = getFormData();
 			
 			// salva no banco
 			service.saveOrUpdate(entity);
 			
-			// Atualiza informações na tela
+			// Atualiza as informações da DepartmentListController
 			// Executa o método onDataChanged dos objetos que implementaram a interface DataChangeListener
 			notifyDataChangeListener();
 			
@@ -100,21 +100,26 @@ public class DepartmentFormController implements Initializable {
 		}
 	}
 
+	// Retorna a entidade com os dados do formulário
 	private Department getFormData() {
+		// Instancia a entidade
 		Department obj = new Department();
-		
+		// Cria uma exceção para erros no preenchimento do formulário
 		ValidationException exception = new ValidationException("Validation Error");
-		
+
+		// Seta o id com nulo ou um inteiro
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 		
-		// Valida campo do formulário nome do departamento
+		// Valida o nome digitado no formulário
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
 			// Adiciona mensagem de error na exceção
 			exception.addError("name", "Field can't be empty");
 		}
+		
+		// Seta o nome com o valor digitado no formulário
 		obj.setName(txtName.getText());
 		
-		// Se existe erro de validação, retorna exceção
+		// Se existe erro de validação, propaga a exceção
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}

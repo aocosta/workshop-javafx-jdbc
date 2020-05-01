@@ -73,6 +73,8 @@ public class DepartmentListController implements Initializable, DataChangeListen
 	}
 
 	private void initializeNodes() {
+		// Inicialização das colunas com o nome dos atributos da classe Department
+		// Isso é necessário para os dados apareçam quando a tabela for populada
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
 
@@ -97,20 +99,25 @@ public class DepartmentListController implements Initializable, DataChangeListen
 
 	private void createDialogForm(Department obj, String absoluteName, Stage parentStage) {
 		try {
+			// Instancia o formulário: DepartmentForm
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
 
+			// Obtem o controlador do formulário: DepartmentFormController
 			DepartmentFormController controller = loader.getController();
+
+			// Injeta no DepartmentFormController as suas dependências: Department e DepartmentService
 			controller.setDepartment(obj);
 			controller.setDepartmentService(new DepartmentService());
-
-			// Adiciona este objeto (this) na lista de DataChangeListener para que ele possa
-			// ser atualizado
-			// quando a tabela Department também for
-			controller.subscribeDataChangeListener(this);
-
+			
+			// Atualiza os campos do DepartmentFormController
 			controller.updateFormData();
 
+			/* Adiciona o objeto atual (DepartmentListController) na lista de atualizações
+			   para que ele possa ser atualizado na volta do formulário */
+			controller.subscribeDataChangeListener(this);
+			
+			// Abre o formuário DepartmentForm em estilo Modal
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Enter Department data");
 			dialogStage.setScene(new Scene(pane));
@@ -125,8 +132,8 @@ public class DepartmentListController implements Initializable, DataChangeListen
 		}
 	}
 
-	// Método chamado pela classe que atualiza a tabela Department para que está
-	// classe também sofra atualização
+	/* Este método é chamado na classe DepartmentFormController em caso de alteração na tabela Department
+	   para que os dados desta também possam ser atualizados */
 	@Override
 	public void onDataChanged() {
 		// Atualiza a Table View de departamentos
